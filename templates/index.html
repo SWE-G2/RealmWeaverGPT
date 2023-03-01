@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realm Weaver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F0F0F0;
+        }
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0066CC;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0052A3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Realm Weaver!</h1>
+    <button onclick="location.href='/campaign'">Create a new campaign</button>
+</body>
+</html>

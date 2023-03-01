@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Confirmation</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<style>
+h1 {
+    font-size: 36px;
+    text-align: center;
+    margin-top: 50px;
+}
+p {
+    font-family: Arial, sans-serif;
+    background-color: #F0F0F0;
+}
+</style>
+<body>
+    <h1>Confirm Campaign</h1>
+    <p>Please confirm the following campaign:</p>
+    <p>{{ prompt }}</p>
+    <p>The generated campaign is:</p>
+    <p>{{ campaign }}</p>
+</body>
+</html>
