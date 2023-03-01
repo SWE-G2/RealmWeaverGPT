@@ -2,9 +2,13 @@ from flask import Flask, render_template, request, redirect, url_for
 import requests
 import openai
 import os
+from dotenv import load_dotenv
+import dotenv
 app = Flask(__name__)
 
-
+load_dotenv(override=True)
+api_key = dotenv.get_key(".env", "OPENAI_API_KEY")
+print(api_key)
 
 @app.route('/campaign', methods=['GET', 'POST'])
 def campaign():
@@ -33,7 +37,6 @@ def confirm():
 
 
 
-openai.api_key= "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"
 
 def generate_campaign(prompt):
     response = openai.Completion.create(
