@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Confirm Character Sheet</title>
+  </head>
+  <body>
+    <h1>Confirm Character Sheet</h1>
+    <h2>Character Information:</h2>
+    <p>Name: {{ name }}</p>
+    <p>Age: {{ age }}</p>
+    <p>Race: {{ race }}</p>
+    <p>Class: {{ char_class }}</p>
+    <p>Gear: {{ gear }}</p>
+    <p>Weapons: {{ weapons }}</p>
+    <p>Spells: {{ spells }}</p>
+    <p>Extra Info: {{ extra_info }}</p>
+
+    <h2>Ability Scores:</h2>
+    <p>Strength: {{ str_score }} ({{ str_mod }})</p>
+    <p>Dexterity: {{ dex_score}} ({{ dex_mod }})</p>
+    <p>Constitution: {{ con_score }} ({{ con_mod}})</p>
+    <p>Intelligence: {{ int_score }} ({{ int_mod }})</p>
+    <p>Wisdom: {{ wis_score}} ({{ wis_mod }})</p>
+    <p>Charisma: {{ char_score}} ({{ char_mod }})</p>
+
+    <h2>Hit Points:</h2>
+    <p>{{ hp }}</p>
+
+    <h2>Generated Response:</h2>
+    <p>{{ response }}</p>
+
+    <form action="{{ url_for('character_sheet') }}" method="GET">
+        <button type="submit">Edit Character Sheet</button>
+      </form>
+      

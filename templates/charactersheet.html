@@ -1,34 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DND-Pathfinder Character Sheet</title>
-</head>
-
-<body>
-  <form>
-    <label for="character-name">Character Name:</label>
-    <input type="text" id="character-name" name="character-name"><br><br>
-
-    <label for="race">Race:</label>
-    <input type="text" id="race" name="race"><br><br>
-
-    <label for="stats">Stats:</label>
-    <textarea id="stats" name="stats" rows="5" cols="40"></textarea><br><br>
-
-    <label for="starting-equipment">Starting Equipment:</label>
-    <textarea id="starting-equipment" name="starting-equipment" rows="5" cols="40"></textarea><br><br>
-
-    <label for="weapons">Weapons:</label>
-    <textarea id="weapons" name="weapons" rows="5" cols="40"></textarea><br><br>
-
-    <label for="starting-spells">Starting Spells (max 4):</label>
-    <textarea id="starting-spells" name="starting-spells" rows="4" cols="40" maxlength="4"></textarea><br><br>
-
-    <input type="submit" value="Submit">
-  </form>
-</body>
-
+<!doctype html>
+<html>
+    <head>
+        <title>Character Sheet</title>
+    </head>
+    <style>
+      body {
+                font-family: Arial, sans-serif;
+                background-color: #F0F0F0;
+            }
+            h1 {
+                font-size: 36px;
+                text-align: center;
+                margin-top: 50px;
+            }
+      form {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    select {
+        font-size: 18px;
+        padding: 5px 10px;
+        border: 2px solid #CCCCCC;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        background-color: #FFFFFF;
+        color: #444444;
+    }
+    select:focus {
+        outline: none;
+        border-color: #0066CC;
+    }
+    label {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    input {
+        font-size: 18px;
+        padding: 5px 10px;
+        border: 2px solid #CCCCCC;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    input:focus {
+        outline: none;
+        border-color: #0066CC;
+    }
+    /* Additional styles for confirm.html */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 50px;
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 2px 5px #CCCCCC;
+    }
+    ul {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+    </style>
+    <body>
+        <h1>Character Sheet</h1>
+        <form  method="POST">
+          <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name"><br>
+            
+            <label for="class">Class:</label><br>
+            <input type="text" id="class" name="class"><br>
+            
+            <label for="race">Race:</label><br>
+            <input type="text" id="race" name="race"><br>
+            
+            <label for="age">Age:</label><br>
+            <input type="number" id="age" name="age"><br>
+            
+            <label for="gear">Gear:</label><br>
+            <input type="text" id="gear" name="gear"><br>
+            
+            <label for="weapons">Weapons:</label><br>
+            <input type="text" id="weapons" name="weapons"><br>
+            
+            <label for="spells">Spells:</label><br>
+            <input type="text" id="spells" name="spells"><br>
+            
+            <label for="level">Level:</label><br>
+            <input type="number" id="level" name="level" value="1"><br>
+        
+        <h2>Extra Information</h2>
+            <textarea name="extra_info" rows="10" cols="50"></textarea>
+            <br>
+            
+            <input type="submit" value="Submit">
+        </form>
+        
+    </body>
 </html>

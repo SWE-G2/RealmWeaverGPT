@@ -5,11 +5,69 @@ import openai
 import os
 from dotenv import load_dotenv
 import dotenv
+import func.dice as dice
+import random
 app = Flask(__name__)
 
 load_dotenv(override=True)
 api_key = dotenv.get_key(".env", "OPENAI_API_KEY")
 print(api_key)
+ABILITIES = {
+    'str': 'Strength',
+    'dex': 'Dexterity',
+    'con': 'Constitution',
+    'int': 'Intelligence',
+    'wis': 'Wisdom',
+    'cha': 'Charisma'
+}
+
+def calculate_modifier(ability_scores, ability):
+    if ability not in ability_scores:
+        return 0
+    return (ability_scores[ability] - 10) // 2
+
+
+
+
+
+def get_class_hit_dice(char_class):
+    """
+    Given a character class, returns the corresponding hit dice.
+    """
+    hit_dice_map = {
+        "Barbarian": 12,
+        "Bard": 8,
+        "Cleric": 8,
+        "Druid": 8,
+        "Fighter": 10,
+        "Monk": 8,
+        "Paladin": 10,
+        "Ranger": 10,
+        "Rogue": 8,
+        "Sorcerer": 6,
+        "Wizard": 6
+    }
+
+    if char_class in hit_dice_map:
+        return hit_dice_map[char_class]
+    else:
+        return None
+
+
+def roll_ability_scores():
+    # Create an empty dictionary to hold ability scores
+    ability_scores = {}
+    # Generate six ability scores using 4d6 drop lowest method
+    for ability in ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma']:
+        score = dice.roll_dice(4, 6)
+        score.remove(min(score))
+        ability_scores[ability] = int(sum(score))
+    print(f"Generated ability scores: {ability_scores}")
+    return ability_scores
+
+
+
+
 
 @app.route('/campaign', methods=['GET', 'POST'])
 def campaign():
@@ -37,37 +95,60 @@ def confirm():
         return redirect(url_for('campaign'))
 
 @app.route('/charactersheet', methods=['GET', 'POST'])
-def charactersheet():
+def character_sheet():
     if request.method == 'POST':
-        # Process the form data and generate prompts to ChatGPT
+        # Get character information from form
         name = request.form['name']
         race = request.form['race']
-        class_ = request.form['class']
-        alignment = request.form['alignment']
-        stats = {}
-        stats['str'] = int(request.form['str'])
-        stats['dex'] = int(request.form['dex'])
-        stats['con'] = int(request.form['con'])
-        stats['int'] = int(request.form['int'])
-        stats['wis'] = int(request.form['wis'])
-        stats['cha'] = int(request.form['cha'])
-        starting_spells = request.form['starting-spells']
-        # Generate prompts using the form data
-        prompt = generate_prompt(name, race, class_, alignment, stats, starting_spells)
-        completion = openai.Completion.create(
-            engine="davinci",
-            prompt=prompt,
-            max_tokens=1024,
-            n=1,
-            stop=None,
-            temperature=0.5,
-        )
-        response = completion.choices[0].text.strip()
-        # Render the response as HTML
-        return render_template('charactersheet_response.html', response=response)
+        char_class = request.form['class']
+        age = request.form['age']
+        gear = request.form['gear']
+        weapons = request.form['weapons']
+        spells = request.form['spells']
+        extra_info = request.form['extra_info']
+        # Generate ability scores
+        ability_scores = roll_ability_scores()
+        hit_dice = get_class_hit_dice(char_class)
+        if hit_dice is None:
+            hit_dice = 8
+        # Calculate HP based on hit dice and constitution modifier
+        hit_dice_value = dice.roll_dice(1, hit_dice)
+        con_mod = calculate_modifier(ability_scores, 'Constitution')
+
+
+        hp = sum(hit_dice_value) + con_mod
+
+        # Generate GPT response for background, motivation, and alignment
+        prompt = f"Generate a backstory, motivation, and alignment for a {race} {char_class} named {name}."
+        response = generate_gpt_response(prompt)
+
+        # Render character sheet template with generated data
+        return render_template('confirmcharacter.html',
+                               name=name,
+                               race=race,
+                               char_class=char_class,
+                               age=age,
+                               gear=gear,
+                               weapons=weapons,
+                               spells=spells,
+                               str_score=ability_scores['Strength'],
+                               dex_score=ability_scores['Dexterity'],
+                               con_score=ability_scores['Constitution'],
+                               int_score=ability_scores['Intelligence'],
+                               wis_score=ability_scores['Wisdom'],
+                               cha_score=ability_scores['Charisma'],
+                               str_mod=calculate_modifier(ability_scores,'Strength'),
+                               dex_mod=calculate_modifier(ability_scores, 'Dexterity'),
+                               con_mod=con_mod,
+                               int_mod=calculate_modifier(ability_scores, 'Intelligence'),
+                               wis_mod=calculate_modifier(ability_scores, 'Wisdom'),
+                               cha_mod=calculate_modifier(ability_scores, 'Charisma'),
+                               hp=hp,
+                               extra_info=extra_info,
+                               response=response)
     else:
-        # Render the character sheet HTML form
         return render_template('charactersheet.html')
+
 
 
 
@@ -80,7 +161,54 @@ def generate_campaign(prompt):
     campaign = completion['choices'][0]['message']['content']
     return campaign
 
+def generate_gpt_response(prompt):
+    """
+    Given a prompt, returns a GPT-3 generated response using the specified model engine.
+    """
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+    )
+    message = completion['choices'][0]['message']['content']
+    # Remove newline characters and return the response
+    return message
 
+@app.route('/confirmcharacter', methods=['POST'])
+def confirmcharacter():
+    name = request.form['name']
+    age = request.form['age']
+    race = request.form['race']
+    char_class = request.form['class']
+    gear = request.form['gear']
+    weapons = request.form['weapons']
+    spells = request.form['spells']
+    extra_info = request.form['extra_info']
+    scores = {
+        "Strength": 0,
+        'Dexterity': 0,
+        'Constitution' : 0,
+        'Intelligence' : 0,
+        'Wisdom' : 0,
+        'Charisma': 0
+    }
+    # Roll ability scores and calculate modifiers
+    scores = roll_ability_scores()
+    modifiers = {}
+    for i, score in scores:
+        modifiers[scores[i]] = calculate_modifier(score)
+
+    # Generate HP based on constitution modifier and class hit dice
+    con_mod = modifiers['Constitution']
+    hit_dice = get_class_hit_dice(char_class)
+    hp = f"{hit_dice} + {con_mod}"
+
+    # Generate character background, motivation, and alignment using GPT-3
+    prompt = f"Generate a background, motivation, and alignment for a {race} {char_class} named "#{name}
+    + "."
+    response = generate_gpt_response(prompt)
+
+    # Render the confirmation page with all the information
+    return render_template('confirmcharacter.html', name=name, age=age, race=race, char_class=char_class, gear=gear, weapons=weapons, spells=spells, abilities=scores, modifiers=modifiers, hp=hp, response=response, extra_info=extra_info)
 
 
 @app.route('/')
