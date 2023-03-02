@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 import openai
@@ -71,16 +72,12 @@ def charactersheet():
 
 
 def generate_campaign(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=3900,
-        n=1,
-        stop=None,
-        temperature=1,
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
     )
 
-    campaign = response.choices[0].text.strip()
+    campaign = completion['choices'][0]['message']['content']
     return campaign
 
 
