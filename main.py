@@ -35,6 +35,38 @@ def confirm():
     else:
         return redirect(url_for('campaign'))
 
+@app.route('/charactersheet', methods=['GET', 'POST'])
+def charactersheet():
+    if request.method == 'POST':
+        # Process the form data and generate prompts to ChatGPT
+        name = request.form['name']
+        race = request.form['race']
+        class_ = request.form['class']
+        alignment = request.form['alignment']
+        stats = {}
+        stats['str'] = int(request.form['str'])
+        stats['dex'] = int(request.form['dex'])
+        stats['con'] = int(request.form['con'])
+        stats['int'] = int(request.form['int'])
+        stats['wis'] = int(request.form['wis'])
+        stats['cha'] = int(request.form['cha'])
+        starting_spells = request.form['starting-spells']
+        # Generate prompts using the form data
+        prompt = generate_prompt(name, race, class_, alignment, stats, starting_spells)
+        completion = openai.Completion.create(
+            engine="davinci",
+            prompt=prompt,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+        response = completion.choices[0].text.strip()
+        # Render the response as HTML
+        return render_template('charactersheet_response.html', response=response)
+    else:
+        # Render the character sheet HTML form
+        return render_template('charactersheet.html')
 
 
 
