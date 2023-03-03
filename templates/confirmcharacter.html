@@ -45,5 +45,10 @@
 
     <form action="{{ url_for('character_sheet') }}" method="GET">
         <button type="submit">Edit Character Sheet</button>
+       
       </form>
-      
+      <form>
+        <form action="{{ url_for('lobby')}}" method="GET">
+            <button type="submit">Confirm Character</button>
+        </form>
+    </form>
