@@ -68,7 +68,7 @@ li {
 </style>
 <body>
 	<h1>Campaign Prompt</h1>
-	<form method="post" action="{{ url_for('confirm') }}">
+	<form id="campaign" method="post" action="{{ url_for('confirm') }}">
 		<label for="campaign_name">Campaign Name:</label>
 		<input type="text" name="campaign_name" required><br>
 		<label for="num_players">Number of Players:</label>

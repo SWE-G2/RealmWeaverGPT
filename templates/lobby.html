@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+        
+	<title>Lobby</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.6.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+	<script>
+        var username = window.prompt("Please enter your name:");
+        var socket = io.connect("http://" + document.domain + ":" + location.port);
+        
+        socket.on('connect', function() {
+            socket.emit('join', {'room': 'lobby'});
+            socket.on('chat_message', function(data) {
+  var message = data['message'];
+  var sender = data['sender'];
+  var chat_window = document.getElementById('chat-window');
+  if (sender == '{{ username }}') {
+    // Display message as sent by local client
+    chat_window.innerHTML += '<b>You: </b>' + message + '<br>';
+  } else {
+    // Display message as received from other client
+    chat_window.innerHTML += '<b>' + sender + ': </b>' + message + '<br>';
+  }
+
+        });
+        socket.on('chat_message', function(data) {
+    var message = data['message'];
+    var sender = data['sender'];
+    var chat_window = document.getElementById('chat-window');
+    if (sender == '{{ username }}') {
+        // Display message as sent by local client
+        chat_window.innerHTML += '<b>You: </b>' + message + '<br>';
+    } else {
+        // Display message as received from other client
+        chat_window.innerHTML += '<b>' + sender + ': </b>' + message + '<br>';
+    }
+});
+    
+
+ // Send chat message to server
+ function sendChatMessage() {
+    var messageInput = document.getElementById('messageInput');
+    var message = messageInput.value;
+    var sendButton = document.getElementById('sendButton');
+sendButton.addEventListener('click', sendChatMessage);
+    messageInput.value = '';
+
+    var room = '{{ room }}';
+    var sender = '{{ username }}';
+
+    if (message != '') {
+        var data = {'room': room, 'message': message, 'sender': sender};
+        socket.emit('message', data); // Pass data object as argument here
+    }
+}
+
+    
+    });
+        
+        
+
+
+    
+       
+    </script>
+    
+</head>
+<body>
+	<h1>Lobby</h1>
+	<div class="row">
+		<div class="column">
+			<h2>Players</h2>
+			<ul id="player-list"></ul>
+		</div>
+		<div class="column">
+			<h2>Chat</h2>
+			<div id="messages"></div>
+			<div>
+				<input type="text" id="messageInput">
+				<button id="sendButton">Send</button>
+
+			</div>
+            <div id="chat-window"></div>
+
+		</div>
+	</div>
+</body>
+</html>
